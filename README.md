@@ -4,6 +4,13 @@
 
 A dead-simple markdown reader that makes your docs look like they belong in a design magazine. Drop in your `.md` files, pick a theme, and watch your words transform.
 
+![Primary Dark Theme](screenshot-primary.png)
+
+<p align="center">
+  <img src="screenshot-catppuccin.png" width="48%" alt="Catppuccin Theme">
+  <img src="screenshot-primary-light.png" width="48%" alt="Primary Light Theme">
+</p>
+
 ## Why VelvetMD?
 
 Because your documentation deserves better than GitHub's default renderer. Because you've spent hours tweaking your Obsidian vault's aesthetics and want that same vibe everywhere. Because reading should feel *good*.
