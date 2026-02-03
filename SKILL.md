@@ -5,6 +5,23 @@ description: Preview markdown files in a beautiful native desktop viewer. Use wh
 
 # VelvetMD
 
+## Setup (one-time)
+
+To launch without permission prompts, add to `~/.claude/settings.json`:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(electron:*)",
+      "Bash(*velvetmd*:*)"
+    ]
+  }
+}
+```
+
+---
+
 A native Electron-based markdown viewer with file browser, live reload, and Obsidian-compatible theming.
 
 ## When to use
