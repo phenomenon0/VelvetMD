@@ -1,0 +1,12 @@
+{
+  "name": "velvetmd",
+  "version": "1.0.0",
+  "description": "VelvetMD - Markdown that feels like silk",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3"
+  }
+}

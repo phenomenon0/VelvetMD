@@ -3,1234 +3,955 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SJSON Research v2</title>
+    <title>VelvetMD</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* ═══════════════════════════════════════════════════════════════════════
-           OBSIDIAN-COMPATIBLE CSS VARIABLE SYSTEM
-           All UI elements use Obsidian's standard variable names so themes work
-           ═══════════════════════════════════════════════════════════════════════ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Base color palette (can be overridden by themes) */
         :root {
-            --font-text-theme: Georgia, 'Times New Roman', serif;
-            --font-monospace-theme: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-            --font-interface-theme: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-
-            /* Animation */
-            --animation-speed: 0.2s;
-
-            /* Layout */
-            --sidebar-width: 280px;
-            --content-max-width: 800px;
-            --file-margins: 2rem;
-
-            /* Radiuses */
-            --radius-s: 4px;
-            --radius-m: 8px;
-            --radius-l: 16px;
+            --sidebar-width: 240px;
+            --drag-height: 36px;
+            --content-width: 720px;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           DARK THEME DEFAULTS (Obsidian Standard Variables)
-           ═══════════════════════════════════════════════════════════════════════ */
-        .theme-dark {
-            /* Core backgrounds */
-            --background-primary: #1e1e1e;
-            --background-primary-alt: #262626;
-            --background-secondary: #1a1a1a;
-            --background-secondary-alt: #222222;
-
-            /* Modifiers */
-            --background-modifier-border: #404040;
-            --background-modifier-border-hover: #555555;
-            --background-modifier-border-focus: #666666;
-            --background-modifier-error: rgba(255, 100, 100, 0.15);
-            --background-modifier-success: rgba(100, 255, 100, 0.15);
-            --background-modifier-hover: rgba(255, 255, 255, 0.05);
-
-            /* Text colors */
-            --text-normal: #dcddde;
-            --text-muted: #999999;
-            --text-faint: #666666;
-            --text-accent: #7f6df2;
-            --text-accent-hover: #8b7cf4;
-            --text-on-accent: #ffffff;
-            --text-error: #ff6b6b;
-            --text-success: #6bcf6b;
-            --text-selection: rgba(127, 109, 242, 0.3);
-            --text-highlight-bg: rgba(255, 255, 0, 0.25);
-
-            /* Interactive */
-            --interactive-normal: #2a2a2a;
-            --interactive-hover: #353535;
-            --interactive-accent: #7f6df2;
-            --interactive-accent-hover: #8b7cf4;
-
-            /* Links */
-            --link-color: #7f6df2;
-            --link-color-hover: #9b8df5;
-            --link-external-color: #6ab0f3;
-
-            /* Code */
-            --code-background: rgba(0, 0, 0, 0.3);
-            --code-normal: #e06c75;
-
-            /* Headings (can be themed) */
-            --h1-color: var(--text-normal);
-            --h2-color: var(--text-normal);
-            --h3-color: var(--text-normal);
-            --h4-color: var(--text-normal);
-            --h5-color: var(--text-muted);
-            --h6-color: var(--text-muted);
-
-            /* Extended colors */
-            --color-red: #e06c75;
-            --color-orange: #d19a66;
-            --color-yellow: #e5c07b;
-            --color-green: #98c379;
-            --color-cyan: #56b6c2;
-            --color-blue: #61afef;
-            --color-purple: #c678dd;
-            --color-pink: #e06c95;
-
-            /* Scrollbar */
-            --scrollbar-bg: rgba(0, 0, 0, 0.2);
-            --scrollbar-thumb-bg: rgba(255, 255, 255, 0.2);
-            --scrollbar-active-thumb-bg: rgba(255, 255, 255, 0.3);
-
-            /* Shadows */
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        /* ═══════════════════════════════════════════════════════════════════════
-           LIGHT THEME DEFAULTS (Obsidian Standard Variables)
+           LIGHT THEME (Natural Paper)
            ═══════════════════════════════════════════════════════════════════════ */
         .theme-light {
-            /* Core backgrounds */
-            --background-primary: #ffffff;
-            --background-primary-alt: #f5f6f8;
-            --background-secondary: #f2f3f5;
-            --background-secondary-alt: #e3e5e8;
-
-            /* Modifiers */
-            --background-modifier-border: #dcdcdc;
-            --background-modifier-border-hover: #cccccc;
-            --background-modifier-border-focus: #aaaaaa;
-            --background-modifier-error: rgba(255, 100, 100, 0.15);
-            --background-modifier-success: rgba(100, 200, 100, 0.15);
-            --background-modifier-hover: rgba(0, 0, 0, 0.05);
-
-            /* Text colors */
-            --text-normal: #2e3338;
-            --text-muted: #666666;
-            --text-faint: #999999;
-            --text-accent: #705dcf;
-            --text-accent-hover: #5b48b3;
-            --text-on-accent: #ffffff;
-            --text-error: #e53935;
-            --text-success: #43a047;
-            --text-selection: rgba(112, 93, 207, 0.2);
-            --text-highlight-bg: rgba(255, 255, 0, 0.4);
-
-            /* Interactive */
-            --interactive-normal: #ffffff;
-            --interactive-hover: #f0f0f0;
-            --interactive-accent: #705dcf;
-            --interactive-accent-hover: #5b48b3;
-
-            /* Links */
-            --link-color: #705dcf;
-            --link-color-hover: #5b48b3;
-            --link-external-color: #2962ff;
-
-            /* Code */
-            --code-background: rgba(0, 0, 0, 0.05);
-            --code-normal: #c7254e;
-
-            /* Headings */
-            --h1-color: var(--text-normal);
-            --h2-color: var(--text-normal);
-            --h3-color: var(--text-normal);
-            --h4-color: var(--text-normal);
-            --h5-color: var(--text-muted);
-            --h6-color: var(--text-muted);
-
-            /* Extended colors */
-            --color-red: #e53935;
-            --color-orange: #f57c00;
-            --color-yellow: #f9a825;
-            --color-green: #43a047;
-            --color-cyan: #00acc1;
-            --color-blue: #1e88e5;
-            --color-purple: #8e24aa;
-            --color-pink: #d81b60;
-
-            /* Scrollbar */
-            --scrollbar-bg: rgba(0, 0, 0, 0.05);
-            --scrollbar-thumb-bg: rgba(0, 0, 0, 0.2);
-            --scrollbar-active-thumb-bg: rgba(0, 0, 0, 0.3);
-
-            /* Shadows */
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+            --bg: #f4f1eb;
+            --bg-alt: #ebe7df;
+            --bg-code: rgba(120,100,80,0.06);
+            --fg: #2c2825;
+            --muted: #5c5650;
+            --faint: #8a847a;
+            --border: rgba(80,70,60,0.12);
+            --accent: #8b6b4a;
+            --accent-fg: #f4f1eb;
+            --link: #6a5040;
+            --code-fg: #7a5a3a;
+            --noise-opacity: 0.03;
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           BASE STYLES (Using Obsidian Variables)
+           DARK THEME (Gwern Pure Black)
            ═══════════════════════════════════════════════════════════════════════ */
-
-        html {
-            font-size: 17px;
-            scroll-behavior: smooth;
+        .theme-dark {
+            --bg: #0a0a09;
+            --bg-alt: #111110;
+            --bg-code: #050504;
+            --fg: #c8c4bc;
+            --muted: #7a766e;
+            --faint: #4a4842;
+            --border: rgba(255,255,255,0.05);
+            --accent: #a08860;
+            --accent-fg: #0a0a09;
+            --link: #a08860;
+            --code-fg: #6a9a90;
+            --noise-opacity: 0.015;
         }
 
+        /* ═══════════════════════════════════════════════════════════════════════
+           DEEP NARRATIVE THEME (Warm Sepia)
+           ═══════════════════════════════════════════════════════════════════════ */
+        .theme-deep {
+            --bg: #1a1714;
+            --bg-alt: #231f1a;
+            --bg-code: #12100d;
+            --fg: #e0d8cc;
+            --muted: #a09585;
+            --faint: #6a6055;
+            --border: #3a332a;
+            --accent: #d4a04a;
+            --accent-fg: #1a1714;
+            --link: #d4a04a;
+            --code-fg: #7eb090;
+            --noise-opacity: 0.02;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           FONT FAMILIES
+           ═══════════════════════════════════════════════════════════════════════ */
+        .font-system {
+            --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-heading: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'SF Mono', Consolas, monospace;
+        }
+        .font-serif {
+            --font-body: 'Source Serif 4', Georgia, serif;
+            --font-heading: 'Source Serif 4', Georgia, serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        .font-mono {
+            --font-body: 'JetBrains Mono', Consolas, monospace;
+            --font-heading: 'JetBrains Mono', Consolas, monospace;
+            --font-mono: 'JetBrains Mono', Consolas, monospace;
+        }
+        .font-inter {
+            --font-body: 'Inter', -apple-system, sans-serif;
+            --font-heading: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           SIZE PRESETS
+           ═══════════════════════════════════════════════════════════════════════ */
+        .size-sm {
+            --font-size: 15px;
+            --line-height: 1.5;
+        }
+        .size-md {
+            --font-size: 17px;
+            --line-height: 1.5;
+        }
+        .size-lg {
+            --font-size: 19px;
+            --line-height: 1.5;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           BASE
+           ═══════════════════════════════════════════════════════════════════════ */
+        html { font-size: 16px; }
+
         body {
-            font-family: var(--font-text-theme);
-            background-color: var(--background-primary);
-            color: var(--text-normal);
-            line-height: 1.6;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-body);
+            font-size: var(--font-size);
+            line-height: var(--line-height);
             display: flex;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            transition: background-color var(--animation-speed) ease,
-                        color var(--animation-speed) ease;
+            position: relative;
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: var(--noise-opacity, 0.02);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
-        ::-webkit-scrollbar-track {
-            background: var(--scrollbar-bg);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb-bg);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--scrollbar-active-thumb-bg);
-        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           SIDEBAR (Using Obsidian Variables)
+           WINDOW CHROME
            ═══════════════════════════════════════════════════════════════════════ */
+        .drag-handle {
+            -webkit-app-region: drag;
+            height: var(--drag-height);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
 
+        .drag-handle button, .drag-handle select { -webkit-app-region: no-drag; }
+
+        .window-title {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-left: 70px;
+        }
+
+        .window-btns { display: flex; gap: 6px; }
+        .window-btns button {
+            width: 12px; height: 12px;
+            border-radius: 50%; border: none;
+            cursor: pointer;
+        }
+        .btn-close { background: #ff5f57; }
+        .btn-min { background: #febc2e; }
+        .btn-max { background: #28c840; }
+
+        .platform-darwin .window-btns { display: none; }
+        .platform-linux .window-title, .platform-win32 .window-title { margin-left: 16px; }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           SIDEBAR
+           ═══════════════════════════════════════════════════════════════════════ */
         .sidebar {
             width: var(--sidebar-width);
-            background-color: var(--background-secondary);
-            border-right: 1px solid var(--background-modifier-border);
-            padding: 1.5rem;
+            background: var(--bg-alt);
+            border-right: 1px solid var(--border);
             position: fixed;
-            height: 100vh;
-            overflow-y: auto;
+            top: var(--drag-height);
+            bottom: 0; left: 0;
+            display: flex;
+            flex-direction: column;
             z-index: 100;
-            transition: background-color var(--animation-speed) ease,
-                        border-color var(--animation-speed) ease;
         }
 
-        .sidebar h1 {
-            font-family: var(--font-interface-theme);
-            color: var(--text-normal);
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--background-modifier-border);
+        .sidebar-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
         }
 
-        .sidebar h2 {
-            font-family: var(--font-interface-theme);
-            color: var(--text-muted);
-            font-size: 0.7rem;
+        .app-title {
+            font-family: var(--font-mono);
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            font-weight: 500;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
+            color: var(--muted);
         }
 
-        .nav-item {
-            display: block;
-            padding: 0.5rem 0.75rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: var(--radius-s);
-            font-family: var(--font-interface-theme);
-            font-size: 0.85rem;
+        .sidebar-btns { display: flex; gap: 4px; }
+
+        .btn-icon {
+            width: 26px; height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--muted);
             cursor: pointer;
+        }
+        .btn-icon:hover { background: var(--border); color: var(--fg); }
+        .btn-icon svg { width: 14px; height: 14px; }
+
+        .file-tree { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+        .file-tree-empty {
+            padding: 24px 16px;
+            text-align: center;
+            color: var(--faint);
+            font-size: 13px;
+        }
+        .file-tree-empty .hint {
+            margin-top: 4px;
+            font-size: 11px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            margin: 1px 8px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--muted);
+            border-radius: 4px;
             transition: all 0.15s ease;
         }
+        .file-item:hover { background: var(--border); color: var(--fg); }
+        .file-item.active { background: var(--accent); color: var(--accent-fg); }
+        .file-item.active .file-icon { opacity: 1; }
 
-        .nav-item:hover {
-            background-color: var(--background-modifier-hover);
-            color: var(--text-normal);
+        .file-icon {
+            width: 16px; height: 16px;
+            margin-right: 8px;
+            opacity: 0.5;
+            flex-shrink: 0;
         }
+        .file-icon svg { width: 100%; height: 100%; }
 
-        .nav-item.active {
-            background-color: var(--interactive-accent);
-            color: var(--text-on-accent);
-        }
-
-        /* ═══════════════════════════════════════════════════════════════════════
-           MAIN CONTENT (Using Obsidian Variables)
-           ═══════════════════════════════════════════════════════════════════════ */
-
-        .main-content {
-            margin-left: var(--sidebar-width);
+        .file-name {
             flex: 1;
-            padding: 2rem 3rem;
-            max-width: calc(var(--sidebar-width) + var(--content-max-width) + 6rem);
-        }
-
-        /* Controls bar */
-        .controls {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .controls button {
-            font-family: var(--font-interface-theme);
-            background-color: var(--interactive-normal);
-            border: 1px solid var(--background-modifier-border);
-            color: var(--text-muted);
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-s);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .controls button:hover {
-            background-color: var(--interactive-hover);
-            color: var(--text-normal);
-            border-color: var(--background-modifier-border-hover);
-        }
-
-        /* Theme switcher dropdown */
-        .theme-switcher {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-left: auto;
-        }
-
-        .theme-switcher label {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            font-family: var(--font-interface-theme);
-        }
-
-        .theme-switcher select {
-            font-family: var(--font-interface-theme);
-            background-color: var(--interactive-normal);
-            border: 1px solid var(--background-modifier-border);
-            color: var(--text-normal);
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--radius-s);
-            font-size: 0.8rem;
-            cursor: pointer;
-            min-width: 180px;
-        }
-
-        .theme-switcher select:hover {
-            border-color: var(--background-modifier-border-hover);
-        }
-
-        .theme-switcher select:focus {
-            border-color: var(--interactive-accent);
-            outline: none;
-        }
-
-        /* Mode toggle button */
-        .mode-toggle {
-            background-color: var(--interactive-normal);
-            border: 1px solid var(--background-modifier-border);
-            color: var(--text-muted);
-            padding: 0.5rem;
-            border-radius: var(--radius-s);
-            cursor: pointer;
-            font-size: 1rem;
-            line-height: 1;
-            transition: all 0.15s ease;
-        }
-
-        .mode-toggle:hover {
-            background-color: var(--interactive-hover);
-            color: var(--text-normal);
-        }
-
-        .theme-dark .mode-toggle .sun { display: inline; }
-        .theme-dark .mode-toggle .moon { display: none; }
-        .theme-light .mode-toggle .sun { display: none; }
-        .theme-light .mode-toggle .moon { display: inline; }
-
-        /* ═══════════════════════════════════════════════════════════════════════
-           SECTIONS (Collapsible cards)
-           ═══════════════════════════════════════════════════════════════════════ */
-
-        .section {
-            background-color: var(--background-secondary);
-            border: 1px solid var(--background-modifier-border);
-            border-radius: var(--radius-m);
-            margin-bottom: 1rem;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: all var(--animation-speed) ease;
-        }
-
-        .section:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--background-modifier-border-hover);
-        }
-
-        .section-header {
-            padding: 1rem 1.25rem;
-            background-color: var(--background-secondary-alt);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--background-modifier-border);
-            transition: background-color 0.15s ease;
-        }
-
-        .section-header:hover {
-            background-color: var(--background-modifier-hover);
-        }
-
-        .section-header h2 {
-            font-family: var(--font-interface-theme);
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-normal);
-            margin: 0;
-        }
-
-        .section-header .path {
-            color: var(--text-faint);
-            font-weight: 400;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-        }
-
-        .section-header .toggle {
-            color: var(--text-muted);
-            transition: transform 0.2s ease;
-        }
-
-        .section.collapsed .section-header .toggle {
-            transform: rotate(-90deg);
-        }
-
-        .section-content {
-            padding: 1.5rem;
-            background-color: var(--background-primary);
-            display: block;
-        }
-
-        .section.collapsed .section-content {
-            display: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           MARKDOWN PREVIEW (Obsidian-compatible class names)
+           MAIN CONTENT
            ═══════════════════════════════════════════════════════════════════════ */
-
-        .markdown-preview-view {
-            font-family: var(--font-text-theme);
-            font-size: 1rem;
-            color: var(--text-normal);
-            line-height: 1.75;
+        .main {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--drag-height);
+            flex: 1;
+            padding: 20px 32px;
+            max-width: calc(var(--sidebar-width) + var(--content-width) + 64px);
         }
 
-        /* Headings */
-        .markdown-preview-view h1 {
-            color: var(--h1-color);
-            font-size: 1.8em;
+        .controls {
+            position: sticky;
+            top: var(--drag-height);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 8px 0;
+            margin-bottom: 12px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .control-select {
+            height: 26px;
+            padding: 0 8px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--fg);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+        }
+        .control-select:focus { outline: none; border-color: var(--accent); }
+
+        .size-toggle {
+            display: flex;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .size-toggle button {
+            height: 24px;
+            padding: 0 10px;
+            background: var(--bg-alt);
+            border: none;
+            border-right: 1px solid var(--border);
+            color: var(--muted);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .size-toggle button:last-child { border-right: none; }
+        .size-toggle button:hover { color: var(--fg); }
+        .size-toggle button.active {
+            background: var(--accent);
+            color: var(--accent-fg);
+        }
+
+        .sound-toggle {
+            margin-left: 4px;
+        }
+        .sound-toggle .sound-off { display: none; }
+        .sound-toggle.muted .sound-on { display: none; }
+        .sound-toggle.muted .sound-off { display: block; }
+
+        .vibrant-toggle.active {
+            color: var(--accent);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           VIBRANT MODE - Colorful headings, multi-font
+           ═══════════════════════════════════════════════════════════════════════ */
+        .vibrant .md h1 {
+            background: linear-gradient(135deg, #e07050 0%, #d4a04a 50%, #7eb090 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-weight: 600;
-            margin: 1.5em 0 0.5em;
-            padding-bottom: 0.3em;
-            border-bottom: 1px solid var(--background-modifier-border);
+        }
+        .vibrant .md h2 {
+            color: #d4a04a;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            font-size: 0.95em;
+            letter-spacing: 0.1em;
+        }
+        .vibrant .md h3 {
+            color: #7eb090;
+            font-style: italic;
+        }
+        .vibrant .md h4 {
+            color: #a08860;
+        }
+        .vibrant .md strong {
+            color: #e07050;
+            font-weight: 700;
+        }
+        .vibrant .md em {
+            color: #7eb090;
+        }
+        .vibrant .md a {
+            color: #d4a04a;
+            border-bottom-color: rgba(212, 160, 74, 0.3);
+        }
+        .vibrant .md code {
+            color: #eb4034;
+            background: rgba(235, 64, 52, 0.12);
+            font-weight: 500;
+        }
+        .vibrant .md pre {
+            border-left: 3px solid #eb4034;
+        }
+        .vibrant .md pre code {
+            color: var(--fg);
+            background: none;
+        }
+        .vibrant .md blockquote {
+            border-left-color: #d4a04a;
+            background: rgba(212, 160, 74, 0.05);
+        }
+        .vibrant .md li::marker {
+            color: #7eb090;
         }
 
-        .markdown-preview-view h2 {
-            color: var(--h2-color);
-            font-size: 1.5em;
-            font-weight: 600;
-            margin: 1.3em 0 0.5em;
+        /* Light theme vibrant adjustments */
+        .theme-light.vibrant .md h1 {
+            background: linear-gradient(135deg, #c04020 0%, #a07030 50%, #408050 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .theme-light.vibrant .md h2 { color: #8a6030; }
+        .theme-light.vibrant .md h3 { color: #306040; }
+        .theme-light.vibrant .md strong { color: #c04020; }
+        .theme-light.vibrant .md em { color: #306040; }
+        .theme-light.vibrant .md a { color: #8a6030; }
+        .theme-light.vibrant .md code { color: #c04020; background: rgba(192, 64, 32, 0.08); }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           MARKDOWN CONTENT
+           ═══════════════════════════════════════════════════════════════════════ */
+        .md {
+            font-family: var(--font-body);
+            font-size: var(--font-size);
+            color: var(--fg);
+            line-height: var(--line-height);
+            max-width: var(--content-width);
         }
 
-        .markdown-preview-view h3 {
-            color: var(--h3-color);
-            font-size: 1.25em;
-            font-weight: 600;
-            margin: 1.2em 0 0.4em;
+        .md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
+            font-family: var(--font-heading);
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            color: var(--fg);
         }
 
-        .markdown-preview-view h4 {
-            color: var(--h4-color);
-            font-size: 1.1em;
-            font-weight: 600;
-            margin: 1em 0 0.4em;
+        .md h1 { font-size: 1.4em; margin: 1.2em 0 0.4em; padding-bottom: 0.2em; border-bottom: 1px solid var(--border); }
+        .md h2 { font-size: 1.15em; margin: 1em 0 0.3em; }
+        .md h3 { font-size: 1.05em; margin: 0.8em 0 0.2em; }
+        .md h4 { font-size: 0.95em; margin: 0.7em 0 0.2em; color: var(--muted); }
+        .md h5, .md h6 { font-size: 0.9em; margin: 0.6em 0 0.2em; color: var(--muted); }
+
+        .md p { margin: 0 0 0.6em; }
+
+        .md a { color: var(--link); text-decoration: none; border-bottom: 1px solid var(--border); }
+        .md a:hover { border-color: var(--link); }
+
+        .md strong { font-weight: 600; }
+        .md em { font-style: italic; }
+
+        .md code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            background: var(--bg-code);
+            color: var(--code-fg);
+            padding: 0.15em 0.4em;
+            border-radius: 3px;
         }
 
-        .markdown-preview-view h5 {
-            color: var(--h5-color);
-            font-size: 1em;
-            font-weight: 600;
-            margin: 1em 0 0.3em;
+        .md pre {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            margin: 0.8em 0;
+            font-size: 0.85em;
+            line-height: 1.45;
         }
+        .md pre code { background: none; padding: 0; color: var(--fg); }
 
-        .markdown-preview-view h6 {
-            color: var(--h6-color);
-            font-size: 0.9em;
-            font-weight: 600;
-            margin: 1em 0 0.3em;
-        }
-
-        /* Paragraphs */
-        .markdown-preview-view p {
-            margin: 0.75em 0;
-        }
-
-        /* Links */
-        .markdown-preview-view a {
-            color: var(--link-color);
-            text-decoration: underline;
-            text-decoration-color: rgba(127, 109, 242, 0.4);
-            text-underline-offset: 2px;
-            transition: color 0.15s ease;
-        }
-
-        .markdown-preview-view a:hover {
-            color: var(--link-color-hover);
-        }
-
-        /* Bold & Italic */
-        .markdown-preview-view strong {
-            font-weight: 600;
-            color: var(--text-normal);
-        }
-
-        .markdown-preview-view em {
+        .md blockquote {
+            border-left: 3px solid var(--accent);
+            margin: 0.8em 0;
+            padding: 0.4em 0.8em;
+            color: var(--muted);
+            background: var(--bg-alt);
             font-style: italic;
         }
 
-        /* Code */
-        .markdown-preview-view code {
-            font-family: var(--font-monospace-theme);
-            font-size: 0.9em;
-            background-color: var(--code-background);
-            color: var(--code-normal);
-            padding: 0.2em 0.4em;
-            border-radius: var(--radius-s);
-        }
+        .md ul, .md ol { margin: 0.5em 0; padding-left: 1.4em; }
+        .md li { margin: 0.15em 0; }
+        .md li::marker { color: var(--muted); }
 
-        .markdown-preview-view pre {
-            background-color: var(--background-secondary);
-            border: 1px solid var(--background-modifier-border);
-            border-radius: var(--radius-m);
-            padding: 1em;
-            overflow-x: auto;
-            margin: 1em 0;
-        }
+        .md table { width: 100%; border-collapse: collapse; margin: 0.8em 0; font-size: 0.9em; }
+        .md th, .md td { border: 1px solid var(--border); padding: 0.4em 0.8em; text-align: left; }
+        .md th { background: var(--bg-alt); font-weight: 600; }
 
-        .markdown-preview-view pre code {
-            background: transparent;
-            color: var(--text-normal);
-            padding: 0;
-            font-size: 0.85em;
-        }
+        .md hr { border: none; border-top: 1px solid var(--border); margin: 1.2em 0; }
 
-        /* Blockquote */
-        .markdown-preview-view blockquote {
-            border-left: 3px solid var(--interactive-accent);
-            margin: 1em 0;
-            padding: 0.5em 1em;
-            color: var(--text-muted);
-            background-color: var(--background-secondary);
-            border-radius: 0 var(--radius-s) var(--radius-s) 0;
-        }
+        .md img { max-width: 100%; border-radius: 4px; }
 
-        /* Lists */
-        .markdown-preview-view ul,
-        .markdown-preview-view ol {
-            margin: 0.75em 0;
-            padding-left: 1.5em;
-        }
-
-        .markdown-preview-view li {
-            margin: 0.25em 0;
-        }
-
-        .markdown-preview-view li::marker {
-            color: var(--text-muted);
-        }
-
-        /* Tables */
-        .markdown-preview-view table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1em 0;
-            font-size: 0.9em;
-        }
-
-        .markdown-preview-view th,
-        .markdown-preview-view td {
-            border: 1px solid var(--background-modifier-border);
-            padding: 0.6em 1em;
-            text-align: left;
-        }
-
-        .markdown-preview-view th {
-            background-color: var(--background-secondary);
-            font-weight: 600;
-            color: var(--text-normal);
-        }
-
-        .markdown-preview-view tr:nth-child(even) {
-            background-color: var(--background-secondary-alt);
-        }
-
-        .markdown-preview-view tr:hover {
-            background-color: var(--background-modifier-hover);
-        }
-
-        /* Horizontal rule */
-        .markdown-preview-view hr {
-            border: none;
-            border-top: 1px solid var(--background-modifier-border);
-            margin: 2em 0;
-        }
-
-        /* Highlight */
-        .markdown-preview-view mark {
-            background-color: var(--text-highlight-bg);
-            padding: 0.1em 0.2em;
-            border-radius: 2px;
+        /* Deep theme extras */
+        .theme-deep .md h2 {
+            font-variant: small-caps;
+            text-transform: lowercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.3em;
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           MOBILE RESPONSIVE
+           WELCOME STATE
            ═══════════════════════════════════════════════════════════════════════ */
-
-        .mobile-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 200;
-            background-color: var(--interactive-normal);
-            border: 1px solid var(--background-modifier-border);
-            color: var(--text-normal);
-            padding: 0.75rem;
-            border-radius: var(--radius-s);
-            font-size: 1.2rem;
+        .welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+        }
+        .welcome h1 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 400;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        .welcome p { color: var(--faint); font-size: 14px; margin-bottom: 24px; }
+        .welcome .btn-open {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: var(--accent);
+            color: var(--accent-fg);
+            border: none;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             cursor: pointer;
         }
-
-        @media (max-width: 900px) {
-            .mobile-toggle {
-                display: block;
-            }
-
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 4rem 1.5rem 2rem;
-                max-width: 100%;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .theme-switcher {
-                margin-left: 0;
-                margin-top: 0.5rem;
-            }
+        .welcome .btn-open:hover { opacity: 0.9; }
+        .welcome .btn-open svg { width: 14px; height: 14px; }
+        .welcome .hint {
+            margin-top: 24px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--faint);
+        }
+        .welcome kbd {
+            display: inline-block;
+            padding: 2px 5px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-size: 10px;
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           THEME INDICATOR
+           TOAST
            ═══════════════════════════════════════════════════════════════════════ */
-
-        .theme-indicator {
+        .toast {
             position: fixed;
-            bottom: 1rem;
-            right: 1rem;
-            background-color: var(--background-secondary);
-            border: 1px solid var(--background-modifier-border);
-            padding: 0.5rem 0.75rem;
-            border-radius: var(--radius-s);
-            font-family: var(--font-interface-theme);
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            z-index: 100;
+            bottom: 20px; right: 20px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--muted);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transform: translateY(10px);
+            transition: all 0.25s var(--ease);
+            z-index: 200;
         }
+        .toast.visible { opacity: 1; transform: translateY(0); }
 
-        .theme-indicator.visible {
-            opacity: 1;
+        /* ═══════════════════════════════════════════════════════════════════════
+           MOBILE
+           ═══════════════════════════════════════════════════════════════════════ */
+        @media (max-width: 800px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s var(--ease); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; padding: 12px 16px; }
+            .mobile-menu { display: flex !important; }
+            .controls { gap: 4px; flex-wrap: wrap; }
+            .control-select { font-size: 9px; padding: 0 6px; }
+            .size-toggle button { padding: 0 8px; }
         }
+        .mobile-menu { display: none; }
     </style>
-
-    <!-- Obsidian Theme CSS - loaded AFTER base styles so themes can override -->
-    <link rel="stylesheet" id="obsidian-theme-css" href="">
 </head>
-<body class="theme-dark">
-    <button class="mobile-toggle" onclick="toggleSidebar()">&#9776;</button>
+<body class="theme-dark font-serif size-md">
+    <!-- SVG Icons (inline defs) -->
+    <svg style="display:none">
+        <defs>
+            <symbol id="icon-doc" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 2h5l4 4v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z"/>
+                <path d="M9 2v4h4"/>
+            </symbol>
+            <symbol id="icon-folder" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M2 4h4l2 2h6v7H2V4z"/>
+            </symbol>
+            <symbol id="icon-refresh" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 8a6 6 0 11-1.5-4M14 2v4h-4"/>
+            </symbol>
+            <symbol id="icon-menu" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M2 4h12M2 8h12M2 12h12"/>
+            </symbol>
+            <symbol id="icon-sound-on" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 5.5h2l3-2.5v10l-3-2.5H3a1 1 0 01-1-1v-3a1 1 0 011-1z"/>
+                <path d="M11 5.5a3.5 3.5 0 010 5M13 3.5a6 6 0 010 9"/>
+            </symbol>
+            <symbol id="icon-sound-off" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 5.5h2l3-2.5v10l-3-2.5H3a1 1 0 01-1-1v-3a1 1 0 011-1z"/>
+                <path d="M11 6l4 4M15 6l-4 4"/>
+            </symbol>
+            <symbol id="icon-palette" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="8" cy="8" r="6"/>
+                <circle cx="6" cy="6" r="1.2" fill="currentColor"/>
+                <circle cx="10" cy="6" r="1.2" fill="currentColor"/>
+                <circle cx="5" cy="9" r="1.2" fill="currentColor"/>
+                <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor"/>
+            </symbol>
+        </defs>
+    </svg>
 
-    <nav class="sidebar">
-        <h1>SJSON Research v2</h1>
+    <!-- Window drag handle -->
+    <div class="drag-handle">
+        <span class="window-title" id="window-title">VelvetMD</span>
+        <div class="window-btns">
+            <button class="btn-min" onclick="velvetAPI?.windowControls.minimize()"></button>
+            <button class="btn-max" onclick="velvetAPI?.windowControls.maximize()"></button>
+            <button class="btn-close" onclick="playClose(); setTimeout(() => velvetAPI?.windowControls.close(), 200)"></button>
+        </div>
+    </div>
 
-        <h2>Root</h2>
-        <a class="nav-item" onclick="scrollToSection('readme')">README</a>
-        <a class="nav-item" onclick="scrollToSection('executive-summary')">Executive Summary</a>
-        <a class="nav-item" onclick="scrollToSection('completion-report')">Completion Report</a>
-        <a class="nav-item" onclick="scrollToSection('hypotheses')">Hypotheses</a>
-
-        <h2>Evidence</h2>
-        <a class="nav-item" onclick="scrollToSection('bentoml-4131')">ML: BentoML #4131</a>
-        <a class="nav-item" onclick="scrollToSection('pyg-6979')">Graph: PyG #6979</a>
-        <a class="nav-item" onclick="scrollToSection('tensorflow-30372')">Arrow: TensorFlow #30372</a>
-        <a class="nav-item" onclick="scrollToSection('protobuf-12062')">Protobuf: #12062</a>
-
-        <h2>Synthesis</h2>
-        <a class="nav-item" onclick="scrollToSection('alternative-explanations')">Alternative Explanations</a>
-        <a class="nav-item" onclick="scrollToSection('where-not-fit')">Where NOT a Fit</a>
-        <a class="nav-item" onclick="scrollToSection('contradictions')">Contradictions</a>
-        <a class="nav-item" onclick="scrollToSection('verification-plans')">Verification Plans</a>
-
-        <h2>Targets</h2>
-        <a class="nav-item" onclick="scrollToSection('ranked-targets')">Ranked Targets</a>
-        <a class="nav-item" onclick="scrollToSection('poc-bentoml')">PoC: BentoML</a>
-        <a class="nav-item" onclick="scrollToSection('poc-pyg-dgl')">PoC: PyG/DGL</a>
-
-        <h2>PoCs</h2>
-        <a class="nav-item" onclick="scrollToSection('poc-1-bentoml')">PoC 1: BentoML Tensor</a>
-        <a class="nav-item" onclick="scrollToSection('poc-2-graph')">PoC 2: Graph Interchange</a>
-        <a class="nav-item" onclick="scrollToSection('poc-3-streaming')">PoC 3: Streaming ML</a>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="app-title">Files</span>
+            <div class="sidebar-btns">
+                <button class="btn-icon" onclick="openFolder()" title="Open folder">
+                    <svg><use href="#icon-folder"/></svg>
+                </button>
+                <button class="btn-icon" onclick="refreshAll()" title="Refresh">
+                    <svg><use href="#icon-refresh"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="file-tree" id="file-tree">
+            <div class="file-tree-empty">
+                <div>No folder open</div>
+                <div class="hint">Open a folder to browse</div>
+            </div>
+        </div>
     </nav>
 
-    <main class="main-content">
+    <!-- Main content -->
+    <main class="main" id="main">
         <div class="controls">
-            <button onclick="expandAll()">Expand All</button>
-            <button onclick="collapseAll()">Collapse All</button>
+            <button class="btn-icon mobile-menu" onclick="toggleSidebar()">
+                <svg><use href="#icon-menu"/></svg>
+            </button>
+            <select class="control-select" id="theme-select" onchange="changeTheme(this.value)">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="deep">Deep</option>
+            </select>
+            <select class="control-select" id="font-select" onchange="changeFont(this.value)">
+                <option value="serif">Serif</option>
+                <option value="system">System</option>
+                <option value="inter">Inter</option>
+                <option value="mono">Mono</option>
+            </select>
+            <div class="size-toggle" id="size-toggle">
+                <button data-size="sm" onclick="changeSize('sm')">S</button>
+                <button data-size="md" onclick="changeSize('md')" class="active">M</button>
+                <button data-size="lg" onclick="changeSize('lg')">L</button>
+            </div>
+            <button class="btn-icon sound-toggle" id="sound-toggle" onclick="toggleSound()" title="Toggle sound">
+                <svg class="sound-on"><use href="#icon-sound-on"/></svg>
+                <svg class="sound-off"><use href="#icon-sound-off"/></svg>
+            </button>
+            <button class="btn-icon vibrant-toggle" id="vibrant-toggle" onclick="toggleVibrant()" title="Colorful mode">
+                <svg><use href="#icon-palette"/></svg>
+            </button>
+        </div>
 
-            <div class="theme-switcher">
-                <button class="mode-toggle" onclick="toggleMode()" title="Toggle dark/light mode">
-                    <span class="sun">&#9728;</span>
-                    <span class="moon">&#9790;</span>
+        <div id="content">
+            <div class="welcome" id="welcome">
+                <h1>VelvetMD</h1>
+                <p>Markdown reader</p>
+                <button class="btn-open" onclick="openFolder()">
+                    <svg><use href="#icon-folder"/></svg>
+                    Open Folder
                 </button>
-
-                <select id="theme-select" onchange="changeTheme(this.value)">
-                    <option value="">Default</option>
-                    <optgroup label="Minimal & Clean">
-                        <option value="minimal">Minimal</option>
-                        <option value="things">Things</option>
-                        <option value="border">Border</option>
-                        <option value="cupertino">Cupertino</option>
-                    </optgroup>
-                    <optgroup label="Dark & Moody">
-                        <option value="catppuccin">Catppuccin</option>
-                        <option value="nord">Nord</option>
-                        <option value="atom">Atom</option>
-                        <option value="dark-graphite">Dark Graphite</option>
-                        <option value="tokyo-night">Tokyo Night</option>
-                        <option value="solarized">Solarized</option>
-                    </optgroup>
-                    <optgroup label="Colorful & Fun">
-                        <option value="primary">Primary</option>
-                        <option value="blue-topaz">Blue Topaz</option>
-                        <option value="prism">Prism</option>
-                        <option value="anuppuccin">AnuPpuccin</option>
-                        <option value="maple">Maple</option>
-                        <option value="80s-neon">80s Neon</option>
-                        <option value="discordian">Discordian</option>
-                    </optgroup>
-                    <optgroup label="Unique">
-                        <option value="california-coast">California Coast</option>
-                        <option value="shimmering-focus">Shimmering Focus</option>
-                        <option value="sanctum">Sanctum</option>
-                        <option value="yin-yang">Yin & Yang</option>
-                        <option value="lyt-mode">LYT Mode</option>
-                        <option value="its-theme">ITS Theme</option>
-                        <option value="shiba-inu">Shiba Inu</option>
-                        <option value="a11y">a11y (Accessibility)</option>
-                    </optgroup>
-                </select>
-            </div>
-        </div>
-
-        <!-- Sections -->
-        <div class="section" id="readme">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>README.md <span class="path">./</span></h2>
-                <span class="toggle">&#9660;</span>
-            </div>
-            <div class="section-content">
-                <div class="markdown-preview-view" id="readme-content"></div>
-            </div>
-        </div>
-
-        <div class="section" id="executive-summary">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>EXECUTIVE_SUMMARY.md <span class="path">./</span></h2>
-                <span class="toggle">&#9660;</span>
-            </div>
-            <div class="section-content">
-                <div class="markdown-preview-view" id="executive-summary-content"></div>
-            </div>
-        </div>
-
-        <div class="section collapsed" id="completion-report">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>COMPLETION_REPORT.md <span class="path">./</span></h2>
-                <span class="toggle">&#9660;</span>
-            </div>
-            <div class="section-content">
-                <div class="markdown-preview-view" id="completion-report-content"></div>
-            </div>
-        </div>
-
-        <div class="section collapsed" id="hypotheses">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>hypotheses.md <span class="path">./</span></h2>
-                <span class="toggle">&#9660;</span>
-            </div>
-            <div class="section-content">
-                <div class="markdown-preview-view" id="hypotheses-content"></div>
-            </div>
-        </div>
-
-        <!-- Evidence sections -->
-        <div class="section collapsed" id="bentoml-4131">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>BentoML #4131 <span class="path">evidence/ml-platforms/</span></h2>
-                <span class="toggle">&#9660;</span>
-            </div>
-            <div class="section-content">
-                <div class="markdown-preview-view" id="bentoml-4131-content"></div>
-            </div>
-        </div>
-
-        <div class="section collapsed" id="pyg-6979">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>PyG #6979 <span class="path">evidence/graph-ml/</span></h2>
-                <span class="toggle">&#9660;</span>
-            </div>
-            <div class="section-content">
-                <div class="markdown-preview-view" id="pyg-6979-content"></div>
-            </div>
-        </div>
-
-        <div class="section collapsed" id="tensorflow-30372">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>TensorFlow #30372 <span class="path">evidence/arrow-parquet/</span></h2>
-                <span class="toggle">&#9660;</span>
-            </div>
-            <div class="section-content">
-                <div class="markdown-preview-view" id="tensorflow-30372-content"></div>
-            </div>
-        </div>
-
-        <div class="section collapsed" id="protobuf-12062">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>Protobuf #12062 <span class="path">evidence/protobuf/</span></h2>
-                <span class="toggle">&#9660;</span>
-            </div>
-            <div class="section-content">
-                <div class="markdown-preview-view" id="protobuf-12062-content"></div>
+                <div class="hint"><kbd>Cmd</kbd>+<kbd>O</kbd> open folder</div>
             </div>
         </div>
     </main>
 
-    <!-- Theme indicator -->
-    <div class="theme-indicator" id="theme-indicator"></div>
+    <div class="toast" id="toast"></div>
 
     <script>
-        // Theme definitions
-        const themes = {
-            // Minimal & Clean
-            'minimal': { name: 'Minimal', file: 'minimal.css' },
-            'things': { name: 'Things', file: 'things.css' },
-            'border': { name: 'Border', file: 'border.css' },
-            'cupertino': { name: 'Cupertino', file: 'cupertino.css' },
-            // Dark & Moody
-            'catppuccin': { name: 'Catppuccin', file: 'catppuccin.css' },
-            'nord': { name: 'Nord', file: 'nord.css' },
-            'atom': { name: 'Atom', file: 'atom.css' },
-            'dark-graphite': { name: 'Dark Graphite', file: 'dark-graphite.css' },
-            'tokyo-night': { name: 'Tokyo Night', file: 'tokyo-night.css' },
-            'solarized': { name: 'Solarized', file: 'solarized.css' },
-            // Colorful
-            'primary': { name: 'Primary', file: 'primary.css' },
-            'blue-topaz': { name: 'Blue Topaz', file: 'blue-topaz.css' },
-            'prism': { name: 'Prism', file: 'prism.css' },
-            'anuppuccin': { name: 'AnuPpuccin', file: 'anuppuccin.css' },
-            'maple': { name: 'Maple', file: 'maple.css' },
-            '80s-neon': { name: '80s Neon', file: '80s-neon.css' },
-            'discordian': { name: 'Discordian', file: 'discordian.css' },
-            // Unique
-            'california-coast': { name: 'California Coast', file: 'california-coast.css' },
-            'shimmering-focus': { name: 'Shimmering Focus', file: 'shimmering-focus.css' },
-            'sanctum': { name: 'Sanctum', file: 'sanctum.css' },
-            'yin-yang': { name: 'Yin & Yang', file: 'yin-yang.css' },
-            'lyt-mode': { name: 'LYT Mode', file: 'lyt-mode.css' },
-            'its-theme': { name: 'ITS Theme', file: 'its-theme.css' },
-            'shiba-inu': { name: 'Shiba Inu', file: 'shiba-inu.css' },
-            'a11y': { name: 'a11y (Accessibility)', file: 'a11y.css' }
-        };
+        let currentDir = null;
+        let currentFile = null;
+        let unwatchFn = null;
+        let viewMode = 'browse';
+        let soundEnabled = true;
+        let audioCtx = null;
 
-        // Load theme
-        function changeTheme(themeId) {
-            const themeLink = document.getElementById('obsidian-theme-css');
-
-            if (!themeId) {
-                themeLink.href = '';
-                showIndicator('Default theme');
-                localStorage.removeItem('selected-theme');
-                return;
-            }
-
-            const theme = themes[themeId];
-            if (theme) {
-                themeLink.href = 'obsidian-themes/' + theme.file;
-                showIndicator(theme.name);
-                localStorage.setItem('selected-theme', themeId);
-            }
+        // Web Audio API sound system
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
         }
 
-        // Toggle dark/light mode
-        function toggleMode() {
-            const body = document.body;
-            const isDark = body.classList.contains('theme-dark');
-
-            body.classList.remove('theme-dark', 'theme-light');
-            body.classList.add(isDark ? 'theme-light' : 'theme-dark');
-
-            localStorage.setItem('color-mode', isDark ? 'light' : 'dark');
-            showIndicator(isDark ? 'Light mode' : 'Dark mode');
+        function playTone(freq, duration, type = 'sine', volume = 0.15) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(volume, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
         }
 
-        // Show theme indicator
-        function showIndicator(text) {
-            const indicator = document.getElementById('theme-indicator');
-            indicator.textContent = text;
-            indicator.classList.add('visible');
-
-            setTimeout(() => {
-                indicator.classList.remove('visible');
-            }, 2000);
+        function playFileSelect() {
+            playTone(880, 0.08, 'sine', 0.1);
+            setTimeout(() => playTone(1100, 0.06, 'sine', 0.08), 50);
         }
 
-        // Toggle section
-        function toggleSection(header) {
-            header.parentElement.classList.toggle('collapsed');
+        function playScrollEnd() {
+            playTone(440, 0.15, 'triangle', 0.08);
         }
 
-        function expandAll() {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('collapsed'));
+        function playClose() {
+            playTone(660, 0.1, 'sine', 0.1);
+            setTimeout(() => playTone(440, 0.15, 'sine', 0.08), 80);
         }
 
-        function collapseAll() {
-            document.querySelectorAll('.section').forEach(s => s.classList.add('collapsed'));
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('velvetmd-sound', soundEnabled ? 'on' : 'off');
+            document.getElementById('sound-toggle').classList.toggle('muted', !soundEnabled);
+            if (soundEnabled) playTone(880, 0.05, 'sine', 0.1);
         }
 
-        function scrollToSection(id) {
-            const section = document.getElementById(id);
-            if (section) {
-                section.classList.remove('collapsed');
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-                // Update active nav
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                event.target.classList.add('active');
-            }
-
-            // Close mobile sidebar
-            document.querySelector('.sidebar').classList.remove('open');
+        let vibrantEnabled = false;
+        function toggleVibrant() {
+            vibrantEnabled = !vibrantEnabled;
+            localStorage.setItem('velvetmd-vibrant', vibrantEnabled ? 'on' : 'off');
+            document.body.classList.toggle('vibrant', vibrantEnabled);
+            document.getElementById('vibrant-toggle').classList.toggle('active', vibrantEnabled);
+            playTone(vibrantEnabled ? 660 : 440, 0.08, 'sine', 0.08);
         }
 
-        function toggleSidebar() {
-            document.querySelector('.sidebar').classList.toggle('open');
+        function detectPlatform() {
+            const p = navigator.platform.toLowerCase();
+            if (p.includes('mac')) return 'darwin';
+            if (p.includes('win')) return 'win32';
+            return 'linux';
         }
 
-        // Sample markdown content
-        const markdownContent = {
-            'readme-content': `# SJSON Research v2
-
-A comprehensive research document exploring **SJSON** (Structured JSON) as a next-generation data serialization format.
-
-## Key Findings
-
-- **10-100x faster** than Protobuf for ML tensor serialization
-- Native support for complex types (Tensor, Node, Edge, GraphShard)
-- Zero-copy deserialization potential
-- Self-describing format with dictionary coding
-
-## Quick Links
-
-| Section | Description |
-|---------|-------------|
-| Executive Summary | High-level overview |
-| Hypotheses | Core research questions |
-| Evidence | Real-world case studies |
-| PoCs | Proof of concept implementations |`,
-
-            'executive-summary-content': `# Executive Summary
-
-## The Opportunity
-
-SJSON addresses a critical gap in the ML/data infrastructure space: **no existing format handles heterogeneous ML payloads efficiently**.
-
-### Current Pain Points
-
-1. **Protobuf** - Requires schema registry, poor tensor support
-2. **MessagePack** - No native tensor types
-3. **Arrow** - Columnar-only, complex for simple use cases
-4. **Pickle** - Security concerns, Python-only
-
-### SJSON Solution
-
-\`\`\`json
-{
-    "type": "Tensor",
-    "dtype": "float32",
-    "shape": [32, 224, 224, 3],
-    "data": "<binary blob>"
-}
-\`\`\`
-
-> SJSON provides native tensor types with self-describing metadata, enabling **10-100x speedups** for ML serving workloads.`,
-
-            'completion-report-content': `# Completion Report
-
-## Research Status: Phase 1 Complete
-
-### Completed Tasks
-
-- [x] Literature review of serialization formats
-- [x] Benchmark methodology design
-- [x] BentoML case study analysis
-- [x] PyG/DGL interoperability research
-- [x] Streaming ML requirements gathering
-
-### Key Metrics
-
-| Metric | Target | Achieved |
-|--------|--------|----------|
-| Serialize time | 10x faster | **47x faster** |
-| Deserialize time | 10x faster | **23x faster** |
-| File size | <=2x | **1.3x** |
-
-### Next Steps
-
-1. Complete PoC implementations
-2. Engage with target companies
-3. Prepare technical blog posts`,
-
-            'hypotheses-content': `# Research Hypotheses
-
-## H1: Tensor Serialization Gap
-
-**Claim:** Existing formats force a tradeoff between self-description and performance for tensor data.
-
-**Evidence needed:**
-- Benchmark Protobuf vs SJSON for ImageNet batches
-- Measure Schema Registry overhead
-- Profile memory allocation patterns
-
-## H2: Graph ML Interchange
-
-**Claim:** No standard format exists for GNN training data that works across frameworks.
-
-**Supporting evidence:**
-- PyG issue #6979 (open 2+ years)
-- DGL uses custom binary format
-- NetworkX -> PyG conversion fails for heterogeneous graphs
-
-## H3: Streaming ML
-
-**Claim:** Avro's Schema Registry is operational overhead that SJSON's dictionary coding can eliminate.
-
-**Validation:**
-- Compare message sizes with/without dictionary coding
-- Measure Schema Registry latency impact`,
-
-            'bentoml-4131-content': `# BentoML Issue #4131
-
-## NumPy Serialization 1000x Slower Than Expected
-
-### Problem Statement
-
-Users reported that serializing NumPy arrays through BentoML's HTTP API was **1000x slower** than direct pickle.
-
-### Root Cause Analysis
-
-\`\`\`python
-# Current approach (slow)
-data = base64.b64encode(array.tobytes())
-payload = {"data": data, "shape": array.shape, "dtype": str(array.dtype)}
-
-# With SJSON (fast)
-payload = sjson.encode(array)  # Native Tensor type
-\`\`\`
-
-### SJSON Opportunity
-
-| Metric | Protobuf | SJSON | Improvement |
-|--------|----------|-------|-------------|
-| Serialize | 45ms | 0.95ms | **47x** |
-| Deserialize | 38ms | 1.6ms | **23x** |
-| Size | 19.2MB | 24.8MB | 0.77x |`,
-
-            'pyg-6979-content': `# PyG Issue #6979
-
-## Bridging the Gap Between DGL and PyG
-
-### The Problem
-
-Researchers need to use datasets from both PyG and DGL ecosystems, but there's no standard interchange format.
-
-### Current Workarounds
-
-1. **Manual conversion** - Write custom code for each dataset
-2. **NetworkX intermediate** - Loses heterogeneous graph support
-3. **Save to disk** - Multiple incompatible formats
-
-### SJSON Graph Types
-
-\`\`\`
-Node {
-    id: string,
-    type: string,
-    features: Tensor
-}
-
-Edge {
-    src: string,
-    dst: string,
-    type: string,
-    features: Tensor?
-}
-
-GraphShard {
-    nodes: Node[],
-    edges: Edge[],
-    metadata: Object
-}
-\`\`\`
-
-SJSON's native graph types enable **lossless roundtrip** between any GNN framework.`,
-
-            'tensorflow-30372-content': `# TensorFlow Issue #30372
-
-## TFRecord 5x Slower Than Expected for Random Access
-
-### Problem
-
-TFRecord format is optimized for sequential reads but performs poorly for random access patterns common in:
-
-- Hyperparameter tuning
-- Distributed training with dynamic sharding
-- Interactive data exploration
-
-### Benchmark Results
-
-| Operation | TFRecord | Arrow | SJSON |
-|-----------|----------|-------|-------|
-| Sequential | 1x | 0.8x | 1.1x |
-| Random | 1x | **5.2x** | **4.8x** |
-| Append | N/A | Poor | **Good** |
-
-### SJSON Advantage
-
-Unlike Arrow, SJSON supports efficient **append operations** while maintaining random access performance.`,
-
-            'protobuf-12062-content': `# Protobuf Issue #12062
-
-## Schema Evolution Pain Points
-
-### The Problem
-
-Protobuf's schema evolution has unexpected gotchas:
-
-1. Field numbers are permanent
-2. Required fields can't be removed safely
-3. Changing field types breaks compatibility
-
-### Real-World Impact
-
-> "We had to version our entire API because we needed to change a field from int32 to int64" - HN comment
-
-### SJSON Approach
-
-SJSON is **self-describing** - schema information is embedded in each message:
-
-\`\`\`json
-{
-    "_types": {
-        "user_id": "int64",
-        "name": "string"
-    },
-    "user_id": 12345678901234,
-    "name": "Alice"
-}
-\`\`\`
-
-No schema registry. No version conflicts. Just data.`
-        };
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Render markdown
-            for (const [id, content] of Object.entries(markdownContent)) {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.innerHTML = marked.parse(content);
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.body.classList.add('platform-' + detectPlatform());
+
+            // Restore preferences
+            const savedTheme = localStorage.getItem('velvetmd-theme') || 'dark';
+            const savedFont = localStorage.getItem('velvetmd-font') || 'serif';
+            const savedSize = localStorage.getItem('velvetmd-size') || 'md';
+            const savedSound = localStorage.getItem('velvetmd-sound') || 'on';
+
+            document.getElementById('theme-select').value = savedTheme;
+            document.getElementById('font-select').value = savedFont;
+
+            changeTheme(savedTheme, true);
+            changeFont(savedFont, true);
+            changeSize(savedSize, true);
+
+            // Restore sound preference
+            soundEnabled = savedSound === 'on';
+            document.getElementById('sound-toggle').classList.toggle('muted', !soundEnabled);
+
+            // Restore vibrant preference
+            const savedVibrant = localStorage.getItem('velvetmd-vibrant') || 'off';
+            vibrantEnabled = savedVibrant === 'on';
+            document.body.classList.toggle('vibrant', vibrantEnabled);
+            document.getElementById('vibrant-toggle').classList.toggle('active', vibrantEnabled);
+
+            // Scroll end detection
+            let scrollTimeout;
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    const scrollTop = window.scrollY;
+                    const scrollHeight = document.documentElement.scrollHeight;
+                    const clientHeight = window.innerHeight;
+                    const atBottom = scrollTop + clientHeight >= scrollHeight - 5;
+                    const atTop = scrollTop <= 5;
+                    if ((atBottom || atTop) && Math.abs(scrollTop - lastScrollTop) > 50) {
+                        playScrollEnd();
+                    }
+                    lastScrollTop = scrollTop;
+                }, 150);
+            });
+
+            // Check initial file
+            if (typeof velvetAPI !== 'undefined') {
+                const init = await velvetAPI.getInitialFile();
+                if (init) {
+                    if (init.mode === 'session') {
+                        viewMode = 'session';
+                        await loadSessionFiles();
+                    } else {
+                        viewMode = 'browse';
+                        if (init.directory) await loadDirectory(init.directory);
+                        if (init.path) await loadFile(init.path);
+                    }
                 }
             }
 
-            // Restore saved preferences
-            const savedMode = localStorage.getItem('color-mode');
-            if (savedMode) {
-                document.body.classList.remove('theme-dark', 'theme-light');
-                document.body.classList.add(savedMode === 'light' ? 'theme-light' : 'theme-dark');
-            }
-
-            const savedTheme = localStorage.getItem('selected-theme');
-            if (savedTheme) {
-                document.getElementById('theme-select').value = savedTheme;
-                changeTheme(savedTheme);
-            }
+            // Keyboard shortcuts
+            document.addEventListener('keydown', e => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'o') {
+                    e.preventDefault();
+                    openFolder();
+                }
+            });
         });
+
+        async function openFolder() {
+            if (typeof velvetAPI === 'undefined') return toast('Electron API unavailable');
+            const dir = await velvetAPI.openFolder();
+            if (dir) await loadDirectory(dir);
+        }
+
+        async function loadDirectory(dir) {
+            currentDir = dir;
+            viewMode = 'browse';
+            if (unwatchFn) unwatchFn();
+            unwatchFn = velvetAPI.watchDirectory(dir, handleChange);
+            await refreshFileTree();
+        }
+
+        async function loadSessionFiles() {
+            if (typeof velvetAPI === 'undefined') return;
+            const files = await velvetAPI.getSessionFiles();
+            renderFileList(files);
+            if (unwatchFn) unwatchFn();
+            unwatchFn = velvetAPI.watchSessionFiles(handleChange);
+            if (files.length > 0) await loadFile(files[0].path);
+            document.querySelector('.app-title').textContent = 'Session';
+        }
+
+        function handleChange(data) {
+            if (data.type === 'change' && data.path === currentFile) loadFile(data.path);
+            else refreshAll();
+        }
+
+        async function refreshAll() {
+            if (viewMode === 'session') await loadSessionFiles();
+            else await refreshFileTree();
+        }
+
+        async function refreshFileTree() {
+            if (!currentDir || typeof velvetAPI === 'undefined') return;
+            const files = await velvetAPI.readDirectory(currentDir);
+            renderFileList(files);
+        }
+
+        function renderFileList(files) {
+            const tree = document.getElementById('file-tree');
+            if (!files.length) {
+                tree.innerHTML = '<div class="file-tree-empty"><div>No markdown files</div><div class="hint">Add .md files</div></div>';
+                return;
+            }
+            tree.innerHTML = files.map(f => {
+                const active = f.path === currentFile ? 'active' : '';
+                const name = f.name.replace('.md', '');
+                return `<div class="file-item ${active}" onclick="loadFile('${f.path.replace(/'/g, "\\'")}')" data-path="${f.path}">
+                    <span class="file-icon"><svg><use href="#icon-doc"/></svg></span>
+                    <span class="file-name">${name}</span>
+                </div>`;
+            }).join('');
+        }
+
+        async function loadFile(path) {
+            if (typeof velvetAPI === 'undefined') return;
+            const res = await velvetAPI.readFile(path);
+            if (!res.success) return toast('Failed to load');
+
+            if (currentFile !== path) playFileSelect();
+            currentFile = path;
+            document.querySelectorAll('.file-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.path === path);
+            });
+            document.getElementById('window-title').textContent = res.name;
+            renderMarkdown(res.content);
+        }
+
+        function renderMarkdown(content) {
+            const el = document.getElementById('welcome');
+            if (el) el.style.display = 'none';
+            document.getElementById('content').innerHTML = `<div class="md">${marked.parse(content)}</div>`;
+        }
+
+        function changeTheme(id, silent) {
+            document.body.className = document.body.className.replace(/theme-\w+/g, '');
+            document.body.classList.add('theme-' + id);
+            // Re-add other classes
+            const font = localStorage.getItem('velvetmd-font') || 'serif';
+            const size = localStorage.getItem('velvetmd-size') || 'md';
+            document.body.classList.add('font-' + font, 'size-' + size, 'platform-' + detectPlatform());
+            localStorage.setItem('velvetmd-theme', id);
+            if (!silent) toast('Theme: ' + id);
+        }
+
+        function changeFont(id, silent) {
+            document.body.className = document.body.className.replace(/font-\w+/g, '');
+            document.body.classList.add('font-' + id);
+            localStorage.setItem('velvetmd-font', id);
+            if (!silent) toast('Font: ' + id);
+        }
+
+        function changeSize(id, silent) {
+            document.body.className = document.body.className.replace(/size-\w+/g, '');
+            document.body.classList.add('size-' + id);
+            localStorage.setItem('velvetmd-size', id);
+            // Update toggle buttons
+            document.querySelectorAll('.size-toggle button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.size === id);
+            });
+            if (!silent) toast('Size: ' + id.toUpperCase());
+        }
+
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('visible');
+            setTimeout(() => t.classList.remove('visible'), 2000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Launch VelvetMD as a native-looking app
+#
+# MODES:
+#   velvetmd /path/to/folder     - Folder mode: browse all .md files
+#   velvetmd /path/to/file.md    - Single file mode
+#   velvetmd --session file1.md file2.md ...  - Session mode: specific files only
+#
+SCRIPT="$(readlink -f "${BASH_SOURCE[0]}")"
+DIR="$(dirname "$SCRIPT")"
+
+# Parse arguments
+if [[ "$1" == "--session" ]]; then
+    # Session mode: collect all file paths after --session
+    shift
+    FILES=""
+    for f in "$@"; do
+        # Convert to absolute path
+        if [[ "$f" = /* ]]; then
+            ABS="$f"
+        else
+            ABS="$(pwd)/$f"
+        fi
+        if [[ -f "$ABS" ]]; then
+            FILES="${FILES}${FILES:+:}$ABS"
+        fi
+    done
+    export VELVETMD_MODE="session"
+    export VELVETMD_FILES="$FILES"
+elif [[ -n "$1" ]]; then
+    # Single file or folder mode
+    if [[ "$1" = /* ]]; then
+        TARGET="$1"
+    else
+        TARGET="$(pwd)/$1"
+    fi
+    export VELVETMD_FILE="$TARGET"
+    export VELVETMD_MODE="browse"
+fi
+
+cd "$DIR/electron"
+electron . 2>/dev/null &
+disown
