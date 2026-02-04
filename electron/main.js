@@ -56,28 +56,40 @@ function createWindow() {
 
 // IPC Handlers
 
-// Read directory contents - only .md files, flat list
+// Read directory contents - .md files first, then subfolders at bottom
 ipcMain.handle('read-directory', async (event, dirPath) => {
     try {
         const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
         const mdFiles = [];
+        const folders = [];
 
         for (const entry of entries) {
             if (entry.name.startsWith('.')) continue;
-            if (!entry.isDirectory() && entry.name.endsWith('.md')) {
-                const filePath = path.join(dirPath, entry.name);
-                const stat = await fs.promises.stat(filePath);
+            const fullPath = path.join(dirPath, entry.name);
+
+            if (entry.isDirectory()) {
+                folders.push({
+                    name: entry.name,
+                    path: fullPath,
+                    isFolder: true
+                });
+            } else if (entry.name.endsWith('.md')) {
+                const stat = await fs.promises.stat(fullPath);
                 mdFiles.push({
                     name: entry.name,
-                    path: filePath,
-                    mtime: stat.mtime
+                    path: fullPath,
+                    mtime: stat.mtime,
+                    isFolder: false
                 });
             }
         }
 
-        // Sort by modification time, newest first
+        // Sort files by modification time (newest first), folders alphabetically
         mdFiles.sort((a, b) => b.mtime - a.mtime);
-        return mdFiles;
+        folders.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Files first, folders at bottom
+        return [...mdFiles, ...folders];
     } catch (err) {
         console.error('read-directory error:', err);
         return [];

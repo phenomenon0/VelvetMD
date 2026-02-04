@@ -258,6 +258,8 @@
         .file-item:hover { background: var(--border); color: var(--fg); }
         .file-item.active { background: var(--accent); color: var(--accent-fg); }
         .file-item.active .file-icon { opacity: 1; }
+        .file-item.folder-item { color: var(--faint); font-size: 12px; }
+        .file-item.folder-item:hover { color: var(--muted); }
 
         .file-icon {
             width: 16px; height: 16px;
@@ -883,14 +885,40 @@
                 tree.innerHTML = '<div class="file-tree-empty"><div>No markdown files</div><div class="hint">Add .md files</div></div>';
                 return;
             }
-            tree.innerHTML = files.map(f => {
-                const active = f.path === currentFile ? 'active' : '';
-                const name = f.name.replace('.md', '');
-                return `<div class="file-item ${active}" onclick="loadFile('${f.path.replace(/'/g, "\\'")}')" data-path="${f.path}">
-                    <span class="file-icon"><svg><use href="#icon-doc"/></svg></span>
-                    <span class="file-name">${name}</span>
+
+            let html = '';
+
+            // Add parent folder navigation if not at root
+            if (currentDir && currentDir !== '/') {
+                const parent = currentDir.replace(/\/[^\/]+\/?$/, '') || '/';
+                html += `<div class="file-item folder-item" onclick="navigateToFolder('${parent.replace(/'/g, "\\'")}')">
+                    <span class="file-icon"><svg><use href="#icon-folder"/></svg></span>
+                    <span class="file-name">..</span>
                 </div>`;
+            }
+
+            html += files.map(f => {
+                if (f.isFolder) {
+                    return `<div class="file-item folder-item" onclick="navigateToFolder('${f.path.replace(/'/g, "\\'")}')" data-path="${f.path}">
+                        <span class="file-icon"><svg><use href="#icon-folder"/></svg></span>
+                        <span class="file-name">${f.name}</span>
+                    </div>`;
+                } else {
+                    const active = f.path === currentFile ? 'active' : '';
+                    const name = f.name.replace('.md', '');
+                    return `<div class="file-item ${active}" onclick="loadFile('${f.path.replace(/'/g, "\\'")}')" data-path="${f.path}">
+                        <span class="file-icon"><svg><use href="#icon-doc"/></svg></span>
+                        <span class="file-name">${name}</span>
+                    </div>`;
+                }
             }).join('');
+
+            tree.innerHTML = html;
+        }
+
+        async function navigateToFolder(path) {
+            playFileSelect();
+            await loadDirectory(path);
         }
 
         async function loadFile(path) {
