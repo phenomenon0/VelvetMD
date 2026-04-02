@@ -2,7 +2,7 @@
   <img src="screenshot-primary.png" alt="VelvetMD" width="100%">
 </p>
 
-<h1 align="center">VelvetMD 🖤</h1>
+<h1 align="center">VelvetMD</h1>
 
 <p align="center">
   <em>Markdown that feels like silk.</em>
@@ -21,20 +21,37 @@
 
 ---
 
-## Features
+## Install as Claude Code Skill (one line)
 
-- 📖 **One file, zero dependencies** — Just `index.html`. That's it.
-- 🎨 **20+ Obsidian themes** — Things, Catppuccin, Nord, Minimal, Dracula, and more
-- 🌓 **Dark/light aware** — Respects your system preference
-- 📱 **Responsive** — Looks good on your phone, tablet, or ultrawide
-- ⚡ **Instant** — No build step, no npm install, no waiting
+```bash
+curl -fsSL https://raw.githubusercontent.com/phenomenon0/VelvetMD/main/install.sh | bash
+```
+
+This clones VelvetMD, registers it as a `/velvetmd` skill in Claude Code, and installs Electron dependencies if available. Restart Claude Code after install.
+
+**Then in Claude Code:**
+```
+/velvetmd ./docs              # Browse a folder
+/velvetmd README.md           # Preview a file
+/velvetmd --session a.md b.md # Session files only
+```
 
 ---
 
-## Quick Start
+## Features
+
+- **One file, zero dependencies** — Just `index.html`. That's it.
+- **20+ Obsidian themes** — Things, Catppuccin, Nord, Minimal, Dracula, and more
+- **Dark/light aware** — Respects your system preference
+- **Responsive** — Looks good on your phone, tablet, or ultrawide
+- **Instant** — No build step, no npm install, no waiting
+
+---
+
+## Quick Start (standalone)
 
 ```bash
-git clone https://github.com/DomainxTend/VelvetMD.git
+git clone https://github.com/phenomenon0/VelvetMD.git
 cd VelvetMD
 open index.html
 ```
@@ -60,10 +77,10 @@ Switch themes with the dropdown. No restart needed.
 
 ## Use Cases
 
-- 📚 Documentation sites without the complexity
-- 🏠 Personal wikis that don't look like 2005
-- 👀 Markdown previews that spark joy
-- 📴 Offline reading that doesn't hurt your eyes
+- Documentation sites without the complexity
+- Personal wikis that don't look like 2005
+- Markdown previews that spark joy
+- Offline reading that doesn't hurt your eyes
 
 ---
 
@@ -74,5 +91,5 @@ Good tools disappear. VelvetMD gets out of the way so you can focus on what matt
 ---
 
 <p align="center">
-  <em>Made for readers who care about the details.</em> ✨
+  <em>Made for readers who care about the details.</em>
 </p>
