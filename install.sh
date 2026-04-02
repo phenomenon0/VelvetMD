@@ -35,6 +35,9 @@ else
   git clone --depth 1 "$REPO" "$DATA_DIR"
 fi
 
+# Make launcher executable
+chmod +x "$DATA_DIR/velvetmd" 2>/dev/null || true
+
 # Ensure ~/.claude/skills exists
 mkdir -p "$CLAUDE_SKILLS"
 

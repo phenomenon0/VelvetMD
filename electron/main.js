@@ -7,7 +7,10 @@ let mainWindow;
 let fileWatchers = new Map();
 let initialFile = process.env.VELVETMD_FILE || null;
 let sessionMode = process.env.VELVETMD_MODE === 'session';
-let sessionFiles = process.env.VELVETMD_FILES ? process.env.VELVETMD_FILES.split(':').filter(f => f) : [];
+// Support both | (new) and : (legacy) as separators
+let sessionFiles = process.env.VELVETMD_FILES
+    ? process.env.VELVETMD_FILES.split(/[|]/).filter(f => f)
+    : [];
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -15,9 +18,9 @@ function createWindow() {
         height: 800,
         minWidth: 600,
         minHeight: 400,
-        frame: false,
-        titleBarStyle: 'hidden',
-        trafficLightPosition: { x: 12, y: 12 },
+        frame: process.platform !== 'darwin',
+        titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
+        trafficLightPosition: process.platform === 'darwin' ? { x: 12, y: 12 } : undefined,
         transparent: false,
         backgroundColor: '#1e1e1e',
         webPreferences: {
@@ -25,8 +28,8 @@ function createWindow() {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js')
         },
-        vibrancy: 'under-window',
-        visualEffectState: 'active',
+        vibrancy: process.platform === 'darwin' ? 'under-window' : undefined,
+        visualEffectState: process.platform === 'darwin' ? 'active' : undefined,
     });
 
     mainWindow.loadFile(path.join(__dirname, '..', 'index.html'));

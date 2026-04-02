@@ -6,7 +6,21 @@
 #   velvetmd /path/to/file.md    - Single file mode
 #   velvetmd --session file1.md file2.md ...  - Session mode: specific files only
 #
-SCRIPT="$(readlink -f "${BASH_SOURCE[0]}")"
+
+# Portable readlink -f (works on macOS, Linux, and Git Bash)
+resolve_path() {
+    local target="$1"
+    cd "$(dirname "$target")" 2>/dev/null || return 1
+    target="$(basename "$target")"
+    while [ -L "$target" ]; do
+        target="$(readlink "$target")"
+        cd "$(dirname "$target")" 2>/dev/null || return 1
+        target="$(basename "$target")"
+    done
+    echo "$(pwd -P)/$target"
+}
+
+SCRIPT="$(resolve_path "${BASH_SOURCE[0]}")"
 DIR="$(dirname "$SCRIPT")"
 
 # Parse arguments
@@ -22,7 +36,8 @@ if [[ "$1" == "--session" ]]; then
             ABS="$(pwd)/$f"
         fi
         if [[ -f "$ABS" ]]; then
-            FILES="${FILES}${FILES:+:}$ABS"
+            # Use | as separator (safe on all platforms including Windows)
+            FILES="${FILES}${FILES:+|}$ABS"
         fi
     done
     export VELVETMD_MODE="session"

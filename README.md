@@ -11,6 +11,7 @@
 <p align="center">
   <a href="#features"><img src="https://img.shields.io/badge/Themes-20+-c9a227?style=for-the-badge&labelColor=0f0f23" alt="Themes"></a>
   <a href="#quick-start"><img src="https://img.shields.io/badge/Setup-1_File-c9a227?style=for-the-badge&labelColor=0f0f23" alt="Setup"></a>
+  <a href="#install-as-claude-code-skill"><img src="https://img.shields.io/badge/Claude_Code-Skill-c9a227?style=for-the-badge&labelColor=0f0f23" alt="Claude Code Skill"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-c9a227?style=for-the-badge&labelColor=0f0f23" alt="License"></a>
 </p>
 
@@ -21,10 +22,16 @@
 
 ---
 
-## Install as Claude Code Skill (one line)
+## Install as Claude Code Skill
 
+**macOS / Linux:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/phenomenon0/VelvetMD/main/install.sh | bash
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/phenomenon0/VelvetMD/main/install.ps1 | iex
 ```
 
 This clones VelvetMD, registers it as a `/velvetmd` skill in Claude Code, and installs Electron dependencies if available. Restart Claude Code after install.
@@ -45,6 +52,7 @@ This clones VelvetMD, registers it as a `/velvetmd` skill in Claude Code, and in
 - **Dark/light aware** — Respects your system preference
 - **Responsive** — Looks good on your phone, tablet, or ultrawide
 - **Instant** — No build step, no npm install, no waiting
+- **Cross-platform** — macOS, Linux, and Windows
 
 ---
 
